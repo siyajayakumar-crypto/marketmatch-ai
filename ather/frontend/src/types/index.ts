@@ -28,6 +28,7 @@ export interface JobMatch {
   salary: string;
   growth: string;
   missing: string[];
+  remote: boolean;
 }
 
 export interface RadarData {
