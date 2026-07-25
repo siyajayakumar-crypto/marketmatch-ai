@@ -10,16 +10,17 @@ Endpoints:
 
 import os
 import json
-import asyncio
 import logging
-from typing import AsyncGenerator, Optional, List
+from typing import AsyncGenerator, List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
-import anthropic
 from dotenv import load_dotenv
+
+from google import genai
+from google.genai import types
 
 from prompts import CAREER_SYSTEM_PROMPT, STARTUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPT
 
@@ -28,8 +29,9 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
-_api_key = os.getenv("ANTHROPIC_API_KEY")
-client = anthropic.Anthropic(api_key=_api_key) if _api_key else None
+# Primary key check for GOOGLE_API_KEY with GEMINI_API_KEY fallback
+_api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=_api_key) if _api_key else None
 
 app = FastAPI(title="Ather API", version="1.0.0")
 
@@ -75,6 +77,7 @@ class ChatRequest(BaseModel):
     messages: List[ChatMessage]
     mode: str = Field(default="career")
 
+
 # ── SSE Helpers ───────────────────────────────────────────────
 
 def sse_text(text: str) -> str:
@@ -85,6 +88,7 @@ def sse_event(event: str, data: dict) -> str:
 
 def sse_error(msg: str) -> str:
     return f"event: error\ndata: {json.dumps({'message': msg})}\n\n"
+
 
 FALLBACK_CAREER = {
     "scores": {
@@ -173,7 +177,7 @@ FALLBACK_BIZ = {
 
 async def stream_career(req: CareerRequest) -> AsyncGenerator[str, None]:
     if not client:
-        yield sse_error("ANTHROPIC_API_KEY not configured")
+        yield sse_error("GOOGLE_API_KEY not configured")
         yield sse_event("scores",    FALLBACK_CAREER["scores"])
         yield sse_event("jobs",      FALLBACK_CAREER["jobs"])
         yield sse_event("radar",     FALLBACK_CAREER["radar"])
@@ -197,35 +201,42 @@ Additional Context: {req.extra}
 Generate the full Career Intelligence Report following the SSE event format."""
 
     try:
-        with client.messages.stream(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            system=CAREER_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_msg}],
-        ) as stream:
-            for chunk in stream.text_stream:
-                yield f"data: {chunk}\n\n"
-                await asyncio.sleep(0)
+        response = await client.aio.models.generate_content_stream(
+            model="gemini-2.5-flash",
+            contents=user_msg,
+            config=types.GenerateContentConfig(
+                system_instruction=CAREER_SYSTEM_PROMPT,
+                max_output_tokens=8192,
+            )
+        )
+        
+        async for chunk in response:
+            if chunk.text:
+                yield f"data: {chunk.text}\n\n"
+                
         yield sse_event("done", {})
-    except anthropic.AuthenticationError:
-        yield sse_error("Authentication failed — check your API key")
-    except anthropic.RateLimitError:
-        yield sse_error("Rate limit reached — please wait and retry")
-        yield sse_event("scores",    FALLBACK_CAREER["scores"])
-        yield sse_event("jobs",      FALLBACK_CAREER["jobs"])
-        yield sse_event("radar",     FALLBACK_CAREER["radar"])
-        yield sse_event("roadmap",   FALLBACK_CAREER["roadmap"])
-        yield sse_event("skillgaps", FALLBACK_CAREER["skillgaps"])
-        yield sse_event("done", {})
+        
     except Exception as e:
-        logger.exception(f"Career stream error: {e}")
-        yield sse_error(f"Server error: {str(e)}")
-        yield sse_event("done", {})
+        error_msg = str(e).lower()
+        if "401" in error_msg or "403" in error_msg or "api key" in error_msg:
+            yield sse_error("Authentication failed — check your API key")
+        elif "429" in error_msg or "quota" in error_msg:
+            yield sse_error("Rate limit reached — please wait and retry")
+            yield sse_event("scores",    FALLBACK_CAREER["scores"])
+            yield sse_event("jobs",      FALLBACK_CAREER["jobs"])
+            yield sse_event("radar",     FALLBACK_CAREER["radar"])
+            yield sse_event("roadmap",   FALLBACK_CAREER["roadmap"])
+            yield sse_event("skillgaps", FALLBACK_CAREER["skillgaps"])
+            yield sse_event("done", {})
+        else:
+            logger.exception(f"Career stream error: {e}")
+            yield sse_error(f"Server error: {str(e)}")
+            yield sse_event("done", {})
 
 
 async def stream_startup(req: StartupRequest) -> AsyncGenerator[str, None]:
     if not client:
-        yield sse_error("ANTHROPIC_API_KEY not configured")
+        yield sse_error("GOOGLE_API_KEY not configured")
         yield sse_event("bizscores",    FALLBACK_BIZ["bizscores"])
         yield sse_event("competitors",  FALLBACK_BIZ["competitors"])
         yield sse_event("milestones",   FALLBACK_BIZ["milestones"])
@@ -248,35 +259,42 @@ Launch Timeline: {req.timeline}
 Generate the full Startup Viability Report following the SSE event format."""
 
     try:
-        with client.messages.stream(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            system=STARTUP_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_msg}],
-        ) as stream:
-            for chunk in stream.text_stream:
-                yield f"data: {chunk}\n\n"
-                await asyncio.sleep(0)
+        response = await client.aio.models.generate_content_stream(
+            model="gemini-2.5-flash",
+            contents=user_msg,
+            config=types.GenerateContentConfig(
+                system_instruction=STARTUP_SYSTEM_PROMPT,
+                max_output_tokens=8192,
+            )
+        )
+        
+        async for chunk in response:
+            if chunk.text:
+                yield f"data: {chunk.text}\n\n"
+                
         yield sse_event("done", {})
-    except anthropic.AuthenticationError:
-        yield sse_error("Authentication failed — check your API key")
-    except anthropic.RateLimitError:
-        yield sse_error("Rate limit reached")
-        yield sse_event("bizscores",    FALLBACK_BIZ["bizscores"])
-        yield sse_event("competitors",  FALLBACK_BIZ["competitors"])
-        yield sse_event("milestones",   FALLBACK_BIZ["milestones"])
-        yield sse_event("funding",      FALLBACK_BIZ["funding"])
-        yield sse_event("revenuemodel", FALLBACK_BIZ["revenuemodel"])
-        yield sse_event("done", {})
+        
     except Exception as e:
-        logger.exception(f"Startup stream error: {e}")
-        yield sse_error(f"Server error: {str(e)}")
-        yield sse_event("done", {})
+        error_msg = str(e).lower()
+        if "401" in error_msg or "403" in error_msg or "api key" in error_msg:
+            yield sse_error("Authentication failed — check your API key")
+        elif "429" in error_msg or "quota" in error_msg:
+            yield sse_error("Rate limit reached")
+            yield sse_event("bizscores",    FALLBACK_BIZ["bizscores"])
+            yield sse_event("competitors",  FALLBACK_BIZ["competitors"])
+            yield sse_event("milestones",   FALLBACK_BIZ["milestones"])
+            yield sse_event("funding",      FALLBACK_BIZ["funding"])
+            yield sse_event("revenuemodel", FALLBACK_BIZ["revenuemodel"])
+            yield sse_event("done", {})
+        else:
+            logger.exception(f"Startup stream error: {e}")
+            yield sse_error(f"Server error: {str(e)}")
+            yield sse_event("done", {})
 
 
 async def stream_chat(req: ChatRequest) -> AsyncGenerator[str, None]:
     if not client:
-        yield sse_text("I'm currently unavailable — please configure the API key.")
+        yield sse_text("I'm currently unavailable — please configure GOOGLE_API_KEY.")
         yield sse_event("done", {})
         return
 
@@ -284,26 +302,36 @@ async def stream_chat(req: ChatRequest) -> AsyncGenerator[str, None]:
     if req.mode == "startup":
         system += "\n\nThe user is in Startup Mode — focus on entrepreneurship, validation, and business strategy."
 
-    messages = [{"role": m.role, "content": m.content} for m in req.messages]
+    gemini_messages = []
+    for m in req.messages:
+        role = "model" if m.role == "assistant" else m.role
+        gemini_messages.append({"role": role, "parts": [{"text": m.content}]})
 
     try:
-        with client.messages.stream(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1500,
-            system=system,
-            messages=messages,
-        ) as stream:
-            for chunk in stream.text_stream:
-                yield f"data: {chunk}\n\n"
-                await asyncio.sleep(0)
+        response = await client.aio.models.generate_content_stream(
+            model="gemini-2.5-flash",
+            contents=gemini_messages,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                max_output_tokens=1500,
+            )
+        )
+        
+        async for chunk in response:
+            if chunk.text:
+                yield f"data: {chunk.text}\n\n"
+                
         yield sse_event("done", {})
-    except anthropic.RateLimitError:
-        yield sse_text("Rate limit reached. Please wait a moment.")
-        yield sse_event("done", {})
+        
     except Exception as e:
-        logger.exception(f"Chat stream error: {e}")
-        yield sse_text("An error occurred. Please try again.")
-        yield sse_event("done", {})
+        error_msg = str(e).lower()
+        if "429" in error_msg or "quota" in error_msg:
+            yield sse_text("Rate limit reached. Please wait a moment.")
+            yield sse_event("done", {})
+        else:
+            logger.exception(f"Chat stream error: {e}")
+            yield sse_text("An error occurred. Please try again.")
+            yield sse_event("done", {})
 
 
 # ── Endpoints ─────────────────────────────────────────────────
