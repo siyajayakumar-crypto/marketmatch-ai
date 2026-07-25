@@ -102,6 +102,7 @@ export interface Competitor {
 export interface MilestoneTask {
   task: string;
   status: "todo" | "done" | "in-progress";
+  metric?: string;
 }
 
 export interface Milestones {
