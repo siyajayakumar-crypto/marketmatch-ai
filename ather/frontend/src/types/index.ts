@@ -116,6 +116,7 @@ export interface FundingInfo {
   runway: string;
   burnRate: string;
   keyMilestones: string[];
+  vcFirms: string[];
 }
 
 export interface StartupResult {
