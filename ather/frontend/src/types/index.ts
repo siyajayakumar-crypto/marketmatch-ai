@@ -115,6 +115,7 @@ export interface FundingInfo {
   sources: string[];
   runway: string;
   burnRate: string;
+  keyMilestones: string[];
 }
 
 export interface StartupResult {
