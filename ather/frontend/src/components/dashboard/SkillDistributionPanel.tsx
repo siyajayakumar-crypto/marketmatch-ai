@@ -192,7 +192,7 @@ export function SkillDistributionPanel({ radar, skillGaps, jobs, overallScore }:
   const strongest = [...skills].sort((a, b) => b.score - a.score)[0];
   const weakest   = [...skills].sort((a, b) => a.score - b.score)[0];
   const totalSalaryUnlock = skillGaps
-    .filter((g) => g.priority === "BLOCKER" || g.priority === "HIGH IMPACT" || g.priority === "HIGH")
+    .filter((g) => g.priority === "BLOCKER" || g.priority === "HIGH IMPACT")
     .reduce((sum, g) => {
       const n = parseInt(g.salaryImpact.replace(/[^0-9]/g, "")) || 0;
       return sum + n;
