@@ -100,7 +100,7 @@ export function StartupForm() {
       <div className="flex items-start gap-3 p-3.5 rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-800 mb-6">
         <Info size={16} className="text-violet-500 mt-0.5 flex-shrink-0" />
         <p className="text-violet-700 dark:text-violet-300 text-xs leading-relaxed">
-          <strong>The more specific you are, the better the analysis.</strong> Don&apos;t write "I want to build an app" — write exactly what it does, who it&apos;s for, and what problem it solves. That specificity is what makes the report truly useful.
+          <strong>The more specific you are, the better the analysis.</strong> Don&apos;t write &quot;I want to build an app&quot; — write exactly what it does, who it&apos;s for, and what problem it solves. That specificity is what makes the report truly useful.
         </p>
       </div>
 
@@ -157,7 +157,7 @@ export function StartupForm() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-                  The Problem You're Solving <span className="text-rose-500">*</span>
+                  The Problem You&apos;re Solving <span className="text-rose-500">*</span>
                 </label>
                 <textarea {...register("problem", { required: "Please describe the problem you solve" })} rows={3}
                   placeholder="Describe the pain point in detail:&#10;• What frustration or inefficiency does your customer experience today?&#10;• How do they currently deal with this problem?&#10;• How often does this problem occur, and how painful is it?&#10;• Why haven't existing solutions solved it adequately?&#10;&#10;Example: 'Independent pharmacies lose 15–20% of revenue to expired or overstocked medication. They currently manage inventory in Excel spreadsheets or rely on gut feeling — there's no affordable, pharmacy-specific tool for this...'"
