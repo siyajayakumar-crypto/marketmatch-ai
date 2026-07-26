@@ -140,7 +140,7 @@ export function streamChat(
 export async function checkHealth() {
   try {
     const res = await fetch(`${BASE}/api/health`);
-    return res.ok ? await res.jsonf() : null;
+    return res.ok ? await res.json() : null;
   } catch {
     return null;
   }
