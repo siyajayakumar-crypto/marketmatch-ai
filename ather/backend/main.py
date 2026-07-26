@@ -202,7 +202,7 @@ Generate the full Career Intelligence Report following the SSE event format."""
 
     try:
         response = await client.aio.models.generate_content_stream(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.5-flash",
             contents=user_msg,
             config=types.GenerateContentConfig(
                 system_instruction=CAREER_SYSTEM_PROMPT,
@@ -260,7 +260,7 @@ Generate the full Startup Viability Report following the SSE event format."""
 
     try:
         response = await client.aio.models.generate_content_stream(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.5-flash",
             contents=user_msg,
             config=types.GenerateContentConfig(
                 system_instruction=STARTUP_SYSTEM_PROMPT,
@@ -309,7 +309,7 @@ async def stream_chat(req: ChatRequest) -> AsyncGenerator[str, None]:
 
     try:
         response = await client.aio.models.generate_content_stream(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.5-flash",
             contents=gemini_messages,
             config=types.GenerateContentConfig(
                 system_instruction=system,
