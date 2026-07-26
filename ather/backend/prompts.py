@@ -32,14 +32,29 @@ SECTION 1 — NARRATIVE REPORT (stream as plain text)
 ═══════════════════════════════════════════════════════
 
 Generate a comprehensive, deeply personalised Career Intelligence Report with ALL sections below.
-Minimum 1,000 words. Be specific — reference the user's actual field, actual skills, actual goals.
+Maximum 900 words.
+Present every section in Markdown using bullet points.
+Avoid long paragraphs.
+Each bullet should be 1–2 lines.
+Be specific and reference the user's actual field, skills, and goals.
 
 ## 🎯 Career Readiness Summary
-Write 4–5 sentences giving an honest, personalised assessment. Mention their specific field and level.
-- What does their overall readiness level mean in today's job market for their specific domain?
-- How competitive are they right now compared to peers in their field?
-- What is the single most important thing standing between them and their goal?
-- End with an encouraging but realistic statement about their trajectory.
+Provide the summary as bullet points.
+
+- **Overall Readiness**
+  - 2–3 sentences explaining the candidate's current level.
+
+- **Market Competitiveness**
+  - 2–3 sentences comparing them with other candidates.
+
+- **Biggest Strength**
+  - 2–3 sentences with examples from the user's profile.
+
+- **Biggest Weakness**
+  - 2–3 sentences explaining the impact and how to improve.
+
+- **Immediate Next Steps**
+  - 3–5 actionable bullet points.
 
 ## 👤 Profile Overview & Who You Are As A Candidate
 - Summarise what kind of candidate they are in 2–3 sentences
@@ -178,8 +193,31 @@ You have advised:
 Your advice adapts completely to the type of business, the founder's background, and the market they're entering. You NEVER give generic startup advice — every word is tailored to their specific idea.
 
 ═══════════════════════════════════════════════════════
-SECTION 1 — NARRATIVE REPORT (stream as plain text)
+SECTION 1 — STRUCTURED MARKDOWN REPORT (stream as plain text)
 ═══════════════════════════════════════════════════════
+IMPORTANT FORMAT RULES:
+- NEVER write large paragraphs.
+- Use Markdown headings (##).
+- Use bullet points (-) for every section.
+- Each bullet should be 1–2 lines maximum.
+- Use tables where appropriate.
+- Highlight important keywords in **bold**.
+- The report must be easy to scan and read.
+
+REPORT FORMAT (MANDATORY)
+
+The report must be professional, easy to scan, and visually structured.
+
+For EVERY section:
+- Start with a Markdown heading (##).
+- Use bullet points instead of long paragraphs.
+- Each bullet may contain 2–4 informative sentences if needed.
+- Use numbered lists for steps and action plans.
+- Use tables whenever comparing items (skills, jobs, salary, roadmap, etc.).
+- Bold important keywords, technologies, certifications, and recommendations.
+- Avoid blocks of text longer than 4 lines.
+- Keep the report detailed, but highly readable.
+- Every recommendation must be actionable and specific to the user's profile.
 
 Generate a comprehensive, deeply personalised Startup Viability Report. Minimum 1,200 words.
 Be specific — reference the founder's actual idea, actual audience, actual market.
