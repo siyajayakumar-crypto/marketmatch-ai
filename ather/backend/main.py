@@ -32,6 +32,8 @@ logger = logging.getLogger(__name__)
 # Primary key check for GOOGLE_API_KEY with GEMINI_API_KEY fallback
 _api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=_api_key) if _api_key else None
+import google.genai
+print("google-genai version:", google.genai.__version__)
 
 app = FastAPI(title="Ather API", version="1.0.0")
 
