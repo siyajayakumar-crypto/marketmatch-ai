@@ -71,7 +71,7 @@ async function consumeSSE(
             }
           }
 
-          const dataStr = dataLines.join("");
+          const dataStr = dataLines.join("\n");
           if (!dataStr) continue;
 
           if (eventName === "done") {
@@ -140,7 +140,7 @@ export function streamChat(
 export async function checkHealth() {
   try {
     const res = await fetch(`${BASE}/api/health`);
-    return res.ok ? await res.json() : null;
+    return res.ok ? await res.jsonf) : null;
   } catch {
     return null;
   }
