@@ -39,6 +39,31 @@ Each bullet should be 1–2 lines.
 Be specific and reference the user's actual field, skills, and goals.
 
 ## 🎯 Career Readiness Summary
+
+========================
+OUTPUT FORMAT (STRICT)
+========================
+
+Return the entire report in valid Markdown.
+
+DO NOT write essay-style paragraphs.
+
+Every section MUST follow this format:
+
+## Section Title
+
+- **Point 1:** Explanation (2–4 sentences)
+- **Point 2:** Explanation (2–4 sentences)
+- **Point 3:** Explanation (2–4 sentences)
+
+Rules:
+- Never write more than one paragraph without bullets.
+- Every section must contain bullets.
+- Use numbered lists for action plans.
+- Use Markdown tables for comparisons whenever appropriate.
+- Use **bold** for important keywords.
+- Do not merge multiple ideas into one long paragraph.
+
 Provide the summary as bullet points.
 
 - **Overall Readiness**
