@@ -71,7 +71,7 @@ async function consumeSSE(
             }
           }
 
-          const dataStr = dataLines.join("\n");
+           dataLines.join("\n");
           if (!dataStr) continue;
 
           if (eventName === "done") {

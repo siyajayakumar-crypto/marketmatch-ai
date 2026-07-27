@@ -214,6 +214,7 @@ Generate the full Career Intelligence Report following the SSE event format."""
         
         async for chunk in response:
             if chunk.text:
+                print(repr(chunk.text))
                 yield f"data: {chunk.text}\n\n"
                 
         yield sse_event("done", {})
