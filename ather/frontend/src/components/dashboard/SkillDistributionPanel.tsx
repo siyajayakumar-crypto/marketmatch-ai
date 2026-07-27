@@ -186,7 +186,10 @@ interface Props {
 
 export function SkillDistributionPanel({ radar, skillGaps, jobs, overallScore }: Props) {
   // Build skill list from radar data
-  const skills = radar.labels.map((label, i) => ({ name: label, score: radar.values[i] }));
+  const skills = (radar?.labels ?? []).map((label, i) => ({
+  name: label,
+  score: radar?.values?.[i] ?? 0,
+}));
 
   // Derive stat tile values
   const strongest = [...skills].sort((a, b) => b.score - a.score)[0];
