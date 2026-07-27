@@ -11,7 +11,7 @@ interface StreamingTextProps {
 }
 
 export function StreamingText({ content, isStreaming, className }: StreamingTextProps) {
-  alert(content.substring(0, 300));
+  
   return (
     <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
       <ReactMarkdown
