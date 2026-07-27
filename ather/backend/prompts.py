@@ -46,6 +46,10 @@ OUTPUT FORMAT (STRICT)
 
 Return the entire report in valid Markdown.
 
+Leave one blank line after every heading.
+
+Never put paragraph text on the same line as a heading.
+
 DO NOT write essay-style paragraphs.
 
 Every section MUST follow this format:
